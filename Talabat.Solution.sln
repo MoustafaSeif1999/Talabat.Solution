@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Talabat.APIs", "Talabat.APIs\Talabat.APIs.csproj", "{9F1C3334-2CF8-4405-8719-CBC8FB68C532}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9F1C3334-2CF8-4405-8719-CBC8FB68C532}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F1C3334-2CF8-4405-8719-CBC8FB68C532}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F1C3334-2CF8-4405-8719-CBC8FB68C532}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F1C3334-2CF8-4405-8719-CBC8FB68C532}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ADEDCBED-8893-4418-AE4A-1B363D651B04}
+	EndGlobalSection
+EndGlobal
