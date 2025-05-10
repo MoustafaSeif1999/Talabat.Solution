@@ -4,14 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Talabat.Core.Entities;
+using Talabat.Core.Specifications;
 
 namespace Talabat.Core.Repositries
 {
     public interface IGenericReopositiory<T> where T : BaseEntity
     {
-        Task< IEnumerable<T> > GetAllAsync();
+        Task< IReadOnlyList<T> > GetAllAsync();
 
         Task<T> GetByIdAsync(int id);
+
+        Task<IReadOnlyList<T>> GetAllWithSpecAsync(ISpecification<T> Spec);
+
+        Task<T> GetByIdWithSpecAsync(ISpecification<T> Spec);
+
 
     }
 }
