@@ -19,5 +19,8 @@ namespace Talabat.Core.Repositries
         Task<T> GetByIdWithSpecAsync(ISpecification<T> Spec);
 
 
+        Task<int> GetCountAsync(ISpecification<T> Spec);
+
+
     }
 }

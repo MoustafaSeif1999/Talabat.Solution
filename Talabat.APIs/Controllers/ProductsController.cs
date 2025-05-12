@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Validations;
 using Talabat.APIs.DTOs;
 using Talabat.APIs.Errors;
+using Talabat.APIs.Helpers;
 using Talabat.Core.Entities;
 using Talabat.Core.Repositries;
 using Talabat.Core.Specifications;
@@ -30,13 +32,15 @@ namespace Talabat.APIs.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult< IReadOnlyList<ProductToReturnDTO> >> GetAllProducts(string sort)
+        public async Task<ActionResult<Pagination<ProductToReturnDTO> >> GetAllProducts([FromQuery]ProductSpecParams specParams)
         {
-            var product_spec = new ProductWithBrandAndTypeSpec(sort);
+            var product_spec = new ProductWithBrandAndTypeSpec(specParams);
             var products = await _ProductsRepo.GetAllWithSpecAsync(product_spec);
             var Products_View = _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDTO>>(products);
-
-            return Ok(Products_View);
+            var count_Spec = new ProductWithFiltersForCountSpec(specParams);
+            var count = await _ProductsRepo.GetCountAsync(count_Spec);
+            var Standered_Response = new Pagination<ProductToReturnDTO>(specParams.PageSize, specParams.PageIndex,count, Products_View);
+            return Ok(Standered_Response);
         }
 
 
