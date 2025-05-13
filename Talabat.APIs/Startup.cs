@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 using Talabat.APIs.Errors;
 using Talabat.APIs.Extensions;
 using Talabat.APIs.Helpers;
@@ -42,6 +43,12 @@ namespace Talabat.APIs
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             }
             );
+
+            services.AddSingleton<IConnectionMultiplexer>(S =>
+            {
+                var connection = ConfigurationOptions.Parse(Configuration.GetConnectionString("Redis"));
+                return ConnectionMultiplexer.Connect(connection);
+            });
 
             services.AddAppServices();
             services.AddSwaggerServices();
