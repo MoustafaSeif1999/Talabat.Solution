@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Talabat.Core.Entities.Identity;
@@ -18,7 +19,8 @@ namespace Talabat.APIs.Extensions
                 .AddEntityFrameworkStores<AppIdentityDbContext>();
 
 
-            services.AddAuthentication();    
+            services.AddAuthentication( JwtBearerDefaults.AuthenticationScheme )
+                .AddJwtBearer();    
 
             return services;
         }
