@@ -20,6 +20,7 @@ using Talabat.APIs.MiddleWare;
 using Talabat.Core.Repositries;
 using Talabat.Repository;
 using Talabat.Repository.Data;
+using Talabat.Repository.Identity;
 
 namespace Talabat.APIs
 {
@@ -44,6 +45,12 @@ namespace Talabat.APIs
             }
             );
 
+            services.AddDbContext<AppIdentityDbContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection"));
+            }
+            );
+
             services.AddSingleton<IConnectionMultiplexer>(S =>
             {
                 var connection = ConfigurationOptions.Parse(Configuration.GetConnectionString("Redis"));
@@ -52,6 +59,7 @@ namespace Talabat.APIs
 
             services.AddAppServices();
             services.AddSwaggerServices();
+            services.AddIdentityServices();
             
         }
 
