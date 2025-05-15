@@ -59,7 +59,7 @@ namespace Talabat.APIs
 
             services.AddAppServices();
             services.AddSwaggerServices();
-            services.AddIdentityServices();
+            services.AddIdentityServices(Configuration);
             
         }
 
@@ -80,6 +80,9 @@ namespace Talabat.APIs
 
             app.UseStaticFiles();
 
+            app.UseAuthentication();
+
+            app.UseAuthorization();
 
 
 

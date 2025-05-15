@@ -2,6 +2,8 @@
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Validations;
@@ -31,6 +33,7 @@ namespace Talabat.APIs.Controllers
             _mapper = mapper;
         }
 
+        //[Authorize/*(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)*/]
         [HttpGet]
         public async Task<ActionResult<Pagination<ProductToReturnDTO> >> GetAllProducts([FromQuery]ProductSpecParams specParams)
         {

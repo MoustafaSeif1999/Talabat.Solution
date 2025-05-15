@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Talabat.APIs.DTOs;
 using Talabat.Core.Entities;
 using Talabat.Core.Repositries;
 
@@ -9,10 +11,12 @@ namespace Talabat.APIs.Controllers
     public class BasketController : BaseApiController
     {
         private readonly IBasketRepository _basketRepo;
+        private readonly IMapper _mapper;
 
-        public BasketController( IBasketRepository basketRepo )
+        public BasketController( IBasketRepository basketRepo , IMapper mapper )
         {
             _basketRepo = basketRepo;
+            _mapper = mapper;
         }
 
 
@@ -27,9 +31,10 @@ namespace Talabat.APIs.Controllers
 
         [HttpPost]
         
-        public async Task<ActionResult<CustomerBasket>> UpdateBasket(CustomerBasket basket)
+        public async Task<ActionResult<CustomerBasket>> UpdateBasket(CustomerBasketDTO basket)
         {
-            var UpdatedOrCreatedBasket = await _basketRepo.UpdateBasketAsync(basket);
+            var mappedBasket = _mapper.Map<CustomerBasketDTO,CustomerBasket>(basket);
+            var UpdatedOrCreatedBasket = await _basketRepo.UpdateBasketAsync(mappedBasket);
             return Ok(UpdatedOrCreatedBasket);
         }
 
