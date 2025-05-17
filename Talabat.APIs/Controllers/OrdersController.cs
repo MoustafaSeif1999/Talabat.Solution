@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -38,6 +39,44 @@ namespace Talabat.APIs.Controllers
             return Ok(order);
 
         }
+
+
+        [HttpGet]
+
+        public async Task<ActionResult<IReadOnlyList<Order>>> GetOrdersForUser()
+        {
+            var UserMail = User.FindFirstValue(ClaimTypes.Email);
+            var orders = await _orderRepo.GetOrdersForUserAsync(UserMail);
+
+            return Ok(orders);
+        }
+
+
+        [HttpGet("{id}")]
+
+        public async Task<ActionResult<Order>> GetOrderByIdForUser(int id)
+        {
+            var UserMail = User.FindFirstValue(ClaimTypes.Email);
+
+            var order = await _orderRepo.GetOrderByIdForUserAsync(id,UserMail);
+
+            if (order == null)
+                return BadRequest(new ApiResponse(400));
+
+            return Ok(order);
+
+        }
+
+
+        [HttpGet("deliverymethods")]
+        public async Task<ActionResult<IReadOnlyList<DeliveryMethod>>> GetDeliveryMethods()
+        {
+            var DMethods = await _orderRepo.GetDeliveryMethodsAsync();
+
+            return Ok(DMethods);
+        }
+
+
 
     }
 }

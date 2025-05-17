@@ -7,40 +7,31 @@ using Talabat.Core.Entities;
 using Talabat.Core.Entities.Orders_Aggrigate;
 using Talabat.Core.Repositries;
 using Talabat.Core.Services;
+using Talabat.Core.Specifications;
 
 namespace Talabat.Services
 {
     public class OrderService : IOrderService
     {
         private readonly IBasketRepository _basketRepo;
-        private readonly IGenericReopositiory<Product> _productRepo;
-        private readonly IGenericReopositiory<DeliveryMethod> _deliveryMethodRepo;
-        private readonly IGenericReopositiory<Order> _orderRepo;
-
-        public OrderService(
-            IBasketRepository basketRepo ,
-            IGenericReopositiory<Product> productRepo,
-            IGenericReopositiory<DeliveryMethod> deliveryMethodRepo,
-            IGenericReopositiory<Order> orderRepo
-            )
+        private readonly IUnitOfWork _unitOfWork;
+        public OrderService( IBasketRepository basketRepo, IUnitOfWork unitOfWork )
         {
             _basketRepo = basketRepo;
-            _productRepo = productRepo;
-            _deliveryMethodRepo = deliveryMethodRepo;
-            _orderRepo = orderRepo;
+            _unitOfWork = unitOfWork;
         }
 
 
 
         public async Task<Order> CreateOrder(string BuyerEmail, string BasketId, Address ShippingAddress, int DeliveryMethodId)
         {
-            var UserBasket = await _basketRepo.GetBasketAsync( BasketId );
+            var UserBasket = await _basketRepo.GetBasketAsync(BasketId);
 
             var OrderItems = new List<OrderItems>();
 
             foreach (var item in UserBasket.Items)
             {
-                var Product = await _productRepo.GetByIdAsync(item.Id);
+                var Product = await _unitOfWork.Repository<Product>().GetByIdAsync(item.Id);
 
                 var ProductOrdered = new ProductItemOrder(Product.Id, Product.Name, Product.PictureUrl);
 
@@ -49,35 +40,51 @@ namespace Talabat.Services
             }
 
 
-            var subtotal = OrderItems.Sum( item => item.Quantity * item.Price );
+            var subtotal = OrderItems.Sum(item => item.Quantity * item.Price);
 
-            var DelveryMethod = await _deliveryMethodRepo.GetByIdAsync(DeliveryMethodId);
+            var DelveryMethod = await _unitOfWork.Repository<DeliveryMethod>().GetByIdAsync(DeliveryMethodId);
 
-            var Order = new Order( BuyerEmail , ShippingAddress ,DelveryMethod,OrderItems,subtotal);
+            var Order = new Order(BuyerEmail, ShippingAddress, DelveryMethod, OrderItems, subtotal);
 
             // add order at Db 
 
-            await _orderRepo.CreateAsync(Order);
+            await _unitOfWork.Repository<Order>().CreateAsync(Order);
 
             // save changes
+
+            int result = await _unitOfWork.Complate();
+
+            if (result <= 0)
+                return null;
 
             return Order;
 
         }
 
-        public Task<IReadOnlyList<DeliveryMethod>> GetDeliveryMethodsAsync()
+        public async Task<IReadOnlyList<DeliveryMethod>> GetDeliveryMethodsAsync()
         {
-            throw new NotImplementedException();
+            var Dmethods = await _unitOfWork.Repository<DeliveryMethod>().GetAllAsync();
+
+            return Dmethods;
         }
 
-        public Task<Order> GetOrderByIdForUserAsync(int OrderId, string BuyerEmail)
+        public async Task<Order> GetOrderByIdForUserAsync(int OrderId, string BuyerEmail)
         {
-            throw new NotImplementedException();
+            var order_spec = new OrderWithOrderItamsAndDeliveryMethodSpec(OrderId,BuyerEmail);
+
+            var Order = await _unitOfWork.Repository<Order>().GetByIdWithSpecAsync(order_spec);
+
+            return Order;
+
         }
 
-        public Task<IReadOnlyList<Order>> GetOrdersForUserAsync(string BuyerEmail)
+        public async Task<IReadOnlyList<Order>> GetOrdersForUserAsync(string BuyerEmail)
         {
-            throw new NotImplementedException();
+            var order_spec = new OrderWithOrderItamsAndDeliveryMethodSpec(BuyerEmail);
+
+            var Orders = await _unitOfWork.Repository<Order>().GetAllWithSpecAsync(order_spec);
+
+            return Orders;
         }
     }
 }
