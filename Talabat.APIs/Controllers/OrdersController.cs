@@ -5,6 +5,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+//using StackExchange.Redis;
+
+//using StackExchange.Redis;
 using Talabat.APIs.DTOs;
 using Talabat.APIs.Errors;
 using Talabat.Core.Entities.Orders_Aggrigate;
@@ -26,7 +29,7 @@ namespace Talabat.APIs.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<Order>> CreateOrder( OrderDTO orderDTO )
+        public async Task<ActionResult<OrderToReturnDTO>> CreateOrder( OrderDTO orderDTO )
         {
             var Buyermail = User.FindFirstValue(ClaimTypes.Email);
 
@@ -36,25 +39,29 @@ namespace Talabat.APIs.Controllers
             if (order == null)
                 return BadRequest(new ApiResponse(400));
 
-            return Ok(order);
+            var ReturnOrder = _mapper.Map<Order , OrderToReturnDTO>(order);
+
+            return Ok(ReturnOrder);
 
         }
 
 
         [HttpGet]
 
-        public async Task<ActionResult<IReadOnlyList<Order>>> GetOrdersForUser()
+        public async Task<ActionResult<IReadOnlyList<OrderToReturnDTO>>> GetOrdersForUser()
         {
             var UserMail = User.FindFirstValue(ClaimTypes.Email);
             var orders = await _orderRepo.GetOrdersForUserAsync(UserMail);
 
-            return Ok(orders);
+            var ReturnOrders = _mapper.Map<IReadOnlyList<Order>, IReadOnlyList<OrderToReturnDTO>>(orders);
+
+            return Ok(ReturnOrders);
         }
 
 
         [HttpGet("{id}")]
 
-        public async Task<ActionResult<Order>> GetOrderByIdForUser(int id)
+        public async Task<ActionResult<OrderToReturnDTO>> GetOrderByIdForUser(int id)
         {
             var UserMail = User.FindFirstValue(ClaimTypes.Email);
 
@@ -63,7 +70,9 @@ namespace Talabat.APIs.Controllers
             if (order == null)
                 return BadRequest(new ApiResponse(400));
 
-            return Ok(order);
+            var ReturnOrder = _mapper.Map <Order,OrderToReturnDTO >(order);
+
+            return Ok(ReturnOrder);
 
         }
 
