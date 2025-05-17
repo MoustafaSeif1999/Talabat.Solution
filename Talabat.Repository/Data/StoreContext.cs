@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Talabat.Core.Entities;
+using Talabat.Core.Entities.Orders_Aggrigate;
 
 namespace Talabat.Repository.Data
 {
@@ -29,6 +30,14 @@ namespace Talabat.Repository.Data
         public DbSet<ProductType>ProductTypes { get; set; }
 
         public DbSet<Product> Products { get; set; }
+
+
+        public DbSet<Order> Orders { get; set; }
+
+        public DbSet<OrderItems> OrderItems { get; set; }
+
+        public DbSet<DeliveryMethod> DeliveryMethods { get; set; }
+
 
 
     }

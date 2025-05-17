@@ -14,6 +14,11 @@ namespace Talabat.Core.Repositries
 
         Task<T> GetByIdAsync(int id);
 
+        Task CreateAsync(T entity);
+
+        void Update(T entity);
+        void Delete(T entity);
+
         Task<IReadOnlyList<T>> GetAllWithSpecAsync(ISpecification<T> Spec);
 
         Task<T> GetByIdWithSpecAsync(ISpecification<T> Spec);
