@@ -15,10 +15,13 @@ namespace Talabat.Services
     {
         private readonly IBasketRepository _basketRepo;
         private readonly IUnitOfWork _unitOfWork;
-        public OrderService( IBasketRepository basketRepo, IUnitOfWork unitOfWork )
+        private readonly IPaymentServices _paymentServices;
+
+        public OrderService( IBasketRepository basketRepo, IUnitOfWork unitOfWork ,IPaymentServices paymentServices )
         {
             _basketRepo = basketRepo;
-            _unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;   
+            _paymentServices = paymentServices;
         }
 
 
@@ -44,7 +47,17 @@ namespace Talabat.Services
 
             var DelveryMethod = await _unitOfWork.Repository<DeliveryMethod>().GetByIdAsync(DeliveryMethodId);
 
-            var Order = new Order(BuyerEmail, ShippingAddress, DelveryMethod, OrderItems, subtotal);
+
+            var spec = new OrderWithPaymentIntentIdSpec(UserBasket.PaymentIntentId);
+            var ExistingOrder = await _unitOfWork.Repository<Order>().GetByIdWithSpecAsync(spec);
+
+            if ( ExistingOrder != null )
+            {
+                _unitOfWork.Repository<Order>().Delete(ExistingOrder);
+                await _paymentServices.CreateOrUpdatePaymentIntent(BasketId);
+            }
+
+            var Order = new Order(BuyerEmail, ShippingAddress, DelveryMethod, OrderItems , UserBasket.PaymentIntentId, subtotal);
 
             // add order at Db 
 

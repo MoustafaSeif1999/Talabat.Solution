@@ -60,7 +60,14 @@ namespace Talabat.APIs
             services.AddAppServices();
             services.AddSwaggerServices();
             services.AddIdentityServices(Configuration);
-            
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", options =>
+                {
+                    options.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -84,6 +91,7 @@ namespace Talabat.APIs
 
             app.UseAuthorization();
 
+            app.UseCors("CorsPolicy");
 
 
             app.UseEndpoints(endpoints =>
