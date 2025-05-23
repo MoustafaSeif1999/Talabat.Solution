@@ -34,6 +34,7 @@ namespace Talabat.APIs.Controllers
         }
 
         //[Authorize/*(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)*/]
+        [Cached(600)]
         [HttpGet]
         public async Task<ActionResult<Pagination<ProductToReturnDTO> >> GetAllProducts([FromQuery]ProductSpecParams specParams)
         {
@@ -47,6 +48,7 @@ namespace Talabat.APIs.Controllers
         }
 
 
+        [Cached(600)]
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductToReturnDTO>> GetProductById(int id)
         {
@@ -62,6 +64,7 @@ namespace Talabat.APIs.Controllers
         }
 
 
+        [Cached(600)]
         [HttpGet("types")]
         public async Task < ActionResult <IReadOnlyList<ProductType>> >GetAllTypes()
         {
@@ -71,6 +74,8 @@ namespace Talabat.APIs.Controllers
         }
 
 
+
+        [Cached(600)]
         [HttpGet("brands")]
 
         public async Task<ActionResult<IReadOnlyList<ProductBrand>>> GetAllBrands()
